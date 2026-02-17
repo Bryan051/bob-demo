@@ -18,7 +18,7 @@ We recommend you to create a branch before starting using Bob with this reposito
 
 ### ♾️ DevOps
 
-* [Ansible-DevOps](ansible-devops): A demo to show how Bob can generate 
+* [Ansible-DevOps](ansible-devops): A demo to show how Bob can generate Ansible manifests to install and configure an HTTP Server.
 
 ### 🤝 Knowledge Transfer
 
