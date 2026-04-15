@@ -1,4 +1,5 @@
 import anthropic
+import argparse
 import json
 from pathlib import Path
 
@@ -6,9 +7,11 @@ client = anthropic.Anthropic()
 
 BASE_DIR = Path(__file__).parent
 
+
 def load_prompt(name: str) -> str:
     path = BASE_DIR / "prompts" / f"{name}.md"
     return path.read_text(encoding="utf-8")
+
 
 def save_workflow(filename: str, data: dict):
     path = BASE_DIR / "workflows" / filename
@@ -18,14 +21,23 @@ def save_workflow(filename: str, data: dict):
         encoding="utf-8"
     )
 
+
 def run_planner(task: str) -> dict:
     response = client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-opus-4-6",
         max_tokens=8096,
-        system=load_prompt("planner"),
+        system=[{
+            "type": "text",
+            "text": load_prompt("planner"),
+            "cache_control": {"type": "ephemeral"}
+        }],
         messages=[{"role": "user", "content": task}]
     )
-    return json.loads(response.content[0].text)
+    try:
+        return json.loads(response.content[0].text)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Planner 응답 파싱 실패: {e}\n응답: {response.content[0].text}")
+
 
 def run_generator(plan: dict, fail_report: str = None) -> dict:
     content = f"plan.json:\n{json.dumps(plan, ensure_ascii=False)}"
@@ -33,33 +45,41 @@ def run_generator(plan: dict, fail_report: str = None) -> dict:
         content += f"\nfail_report: {fail_report}"
 
     response = client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-opus-4-6",
         max_tokens=8096,
-        system=load_prompt("generator"),
+        system=[{
+            "type": "text",
+            "text": load_prompt("generator"),
+            "cache_control": {"type": "ephemeral"}
+        }],
         messages=[{"role": "user", "content": content}]
     )
-    return json.loads(response.content[0].text)
+    try:
+        return json.loads(response.content[0].text)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Generator 응답 파싱 실패: {e}\n응답: {response.content[0].text}")
+
 
 def run_evaluator(plan: dict, code: dict) -> dict:
     response = client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-opus-4-6",
         max_tokens=8096,
-        system=load_prompt("evaluator"),
+        system=[{
+            "type": "text",
+            "text": load_prompt("evaluator"),
+            "cache_control": {"type": "ephemeral"}
+        }],
         messages=[{
             "role": "user",
             "content": f"plan:\n{json.dumps(plan, ensure_ascii=False)}\n"
-                      f"code:\n{json.dumps(code, ensure_ascii=False)}"
+                       f"code:\n{json.dumps(code, ensure_ascii=False)}"
         }]
     )
-    return json.loads(response.content[0].text)
+    try:
+        return json.loads(response.content[0].text)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Evaluator 응답 파싱 실패: {e}\n응답: {response.content[0].text}")
 
-def save_workflow(filename: str, data: dict):
-    path = Path(f"workflows/{filename}")
-    path.parent.mkdir(exist_ok=True)
-    path.write_text(
-        json.dumps(data, indent=2, ensure_ascii=False),
-        encoding="utf-8"
-    )
 
 def run_pge(task: str, max_iterations: int = 3):
 
@@ -67,7 +87,7 @@ def run_pge(task: str, max_iterations: int = 3):
     print("📋 Planner 실행 중...")
     plan = run_planner(task)
     save_workflow("plan.json", plan)
-    print(f"✅ Planner 완료")
+    print("✅ Planner 완료")
 
     fail_report = None
     for iteration in range(1, max_iterations + 1):
@@ -95,5 +115,11 @@ def run_pge(task: str, max_iterations: int = 3):
     print("최대 반복 초과 - 실패")
     return None
 
+
 if __name__ == "__main__":
-    run_pge("내용을 여기에 입력")
+    parser = argparse.ArgumentParser(description="PGE: Plan-Generate-Evaluate 코드 현대화 파이프라인")
+    parser.add_argument("task", help="현대화할 작업 내용")
+    parser.add_argument("--max-iterations", type=int, default=3, help="최대 반복 횟수 (기본값: 3)")
+    args = parser.parse_args()
+
+    run_pge(args.task, args.max_iterations)
