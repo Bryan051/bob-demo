@@ -1,0 +1,14 @@
+{
+  "changed_files": [
+    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java",
+    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetType.java",
+    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java",
+    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java",
+    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+  ],
+  "added_tests": [],
+  "skipped": [],
+  "summary": "Implemented full legacy-to-MCP modernization for PetClinic: created Pet.java and PetType.java POJOs matching the OpenAPI schema, PetRestClient.java interface with @RegisterRestClient targeting GET /api/pets and GET /api/pets/{petId}, PetMcpServer.java @ApplicationScoped bean exposing two @Tool methods (listPets and getPetById) returning ToolResponse with JSON TextContent via Jackson ObjectMapper, populated application.properties with port 8888/CORS/REST client URL, and updated Kubernetes manifest to add petclinic-mcp sidecar container on port 8888 with a dedicated Service resource.",
+  "iteration": 1
+}
