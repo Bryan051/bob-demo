@@ -27,6 +27,8 @@ If any `target_files` entry is missing from `changed_files` → FAIL.
 
 ### 3. Check each evaluation_criterion by reading actual files
 
+ONLY use static file inspection. NEVER run shell commands, mvn, java, or any build tools.
+
 | Criterion type | How to verify |
 |----------------|---------------|
 | Annotation present | Read the Java file, search for the annotation text |
@@ -34,6 +36,9 @@ If any `target_files` entry is missing from `changed_files` → FAIL.
 | Property set | Read `application.properties`, search for the key=value line |
 | Kubernetes sidecar | Read the YAML, confirm two containers exist with the correct ports |
 | pom.xml not modified | Check `code.json` `changed_files` — pom.xml must NOT appear there |
+
+Any criterion that says "starts successfully", "responds on port", "compiles", or "runs" —
+evaluate it by STATIC CODE INSPECTION ONLY. Do not execute anything.
 
 ### 4. Check for out-of-scope changes
 If `code.json` `changed_files` contains any file NOT in `plan.json` `target_files` → FAIL.

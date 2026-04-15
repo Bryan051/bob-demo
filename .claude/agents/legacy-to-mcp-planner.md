@@ -50,7 +50,9 @@ Three artifacts are always required:
 - `pom.xml` must NOT be modified if both dependencies are already present
 
 ### 5. Define evaluation criteria
-Each criterion must be objectively verifiable by the Evaluator reading actual files.
+Each criterion must be verifiable by STATIC FILE INSPECTION ONLY.
+NEVER include runtime criteria such as "compiles successfully", "starts on port X", "responds to requests", or "mvn quarkus:dev works".
+Only include criteria that can be verified by reading file contents: annotations present, properties set, files exist, YAML structure correct.
 
 ---
 
