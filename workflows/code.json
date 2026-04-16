@@ -1,14 +1,51 @@
 {
-  "changed_files": [
-    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java",
-    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetType.java",
-    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java",
-    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java",
-    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
-    "legacy-to-mcp3/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+  "projectPath": "legacy-to-mcp6/input-documents/petclinic-mcp-bob",
+  "generatedFiles": [
+    {
+      "path": "src/main/java/org/acme/model/PetType.java",
+      "type": "model",
+      "description": "DTO for pet type with id and name fields"
+    },
+    {
+      "path": "src/main/java/org/acme/model/Visit.java",
+      "type": "model",
+      "description": "DTO for visit with id, petId, date, and description fields"
+    },
+    {
+      "path": "src/main/java/org/acme/model/Pet.java",
+      "type": "model",
+      "description": "DTO for pet with id, name, birthDate, type, ownerId, and visits fields"
+    },
+    {
+      "path": "src/main/java/org/acme/PetclinicService.java",
+      "type": "rest-client",
+      "description": "MicroProfile REST Client interface with GET endpoints for pets and petTypes"
+    },
+    {
+      "path": "src/main/java/org/acme/PetTools.java",
+      "type": "mcp-server",
+      "description": "MCP Server tools class exposing listPets, getPet, and listPetTypes as MCP tools"
+    },
+    {
+      "path": "src/main/resources/application.properties",
+      "type": "config",
+      "description": "Quarkus configuration with HTTP port 8888 and CORS enabled"
+    },
+    {
+      "path": "src/main/kubernetes/petclinic-kubernetes.yaml",
+      "type": "kubernetes",
+      "description": "Kubernetes manifest with MCP server sidecar container added to the Deployment"
+    }
   ],
-  "added_tests": [],
-  "skipped": [],
-  "summary": "Implemented full legacy-to-MCP modernization for PetClinic: created Pet.java and PetType.java POJOs matching the OpenAPI schema, PetRestClient.java interface with @RegisterRestClient targeting GET /api/pets and GET /api/pets/{petId}, PetMcpServer.java @ApplicationScoped bean exposing two @Tool methods (listPets and getPetById) returning ToolResponse with JSON TextContent via Jackson ObjectMapper, populated application.properties with port 8888/CORS/REST client URL, and updated Kubernetes manifest to add petclinic-mcp sidecar container on port 8888 with a dedicated Service resource.",
-  "iteration": 1
+  "modifiedFiles": [
+    "src/main/resources/application.properties",
+    "src/main/kubernetes/petclinic-kubernetes.yaml"
+  ],
+  "newFiles": [
+    "src/main/java/org/acme/model/PetType.java",
+    "src/main/java/org/acme/model/Visit.java",
+    "src/main/java/org/acme/model/Pet.java",
+    "src/main/java/org/acme/PetclinicService.java",
+    "src/main/java/org/acme/PetTools.java"
+  ]
 }

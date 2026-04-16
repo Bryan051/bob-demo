@@ -104,11 +104,18 @@ quarkus.rest-client.<configKey>.url=<legacy app internal URL>
 - Confirm the URL in `application.properties` resolves correctly inside the pod (localhost or service name)
 - Do NOT change the existing container
 - Add `resources.limits` — omit only if the plan explicitly excludes it, and note as warning in `code.json`
+- If the task or plan requires exposure of the MCP server outside the pod, add the necessary Service/Route resources instead of stopping at the sidecar container
+
+### Package structure
+- If multiple concerns are introduced, prefer separating packages such as `client`, `mcp`, and `model`/`dto`
+- Do not keep everything in one package when DTOs, tools, and client interfaces are all generated
 
 ### 3. Write unit tests
-For every generated Java class, create a corresponding test file:
-- MCP Server: mock RestClient with `@InjectMock`, assert each `@Tool` method returns non-null `ToolResponse`
-- RestClient: `@QuarkusTest` + WireMock stub for each endpoint
+Create the smallest meaningful test set that validates the generated MCP functionality.
+Prioritize:
+- one test for MCP tool behavior
+- one integration-style test only if dependencies are already available or explicitly planned
+Do not create placeholder tests just to satisfy a file-count requirement.
 If a test cannot be written, add an entry to `skipped` with the reason.
 
 ### 4. Save workflows/code.json

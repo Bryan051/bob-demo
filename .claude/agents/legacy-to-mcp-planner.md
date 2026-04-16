@@ -49,6 +49,8 @@ Three artifacts are always required:
 - Return type must be `ToolResponse` with `TextContent`
 - `pom.xml` must NOT be modified if both dependencies are already present
 - Define a `configKey` value for the RestClient and include it in `constraints` — Generator and Evaluator must use the same value
+- Prefer typed DTOs over `Map<String, Object>` when the OpenAPI schema is sufficiently defined
+- If the user's task requires MCP exposure outside the pod, include Service/Route changes explicitly in `target_files` and `evaluation_criteria`
 
 ### 5. Define evaluation criteria
 Each criterion must be verifiable by STATIC FILE INSPECTION ONLY.
@@ -60,7 +62,8 @@ The following criteria are ALWAYS required — include them in every plan:
 - `quarkus.http.cors.enabled=true` present in `application.properties`
 - No `throws` declaration on any `@Tool` method
 - No `new ObjectMapper()` instantiation in any generated Java file
-- Test file exists for each generated Java class (`added_tests` non-empty in `code.json`)
+- At least one meaningful test exists for the generated MCP functionality unless explicitly impossible
+- If tests are skipped, `code.json.skipped` explains why
 - Kubernetes YAML contains exactly two containers with sidecar `containerPort: 8888`
 
 ---
