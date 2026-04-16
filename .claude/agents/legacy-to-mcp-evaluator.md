@@ -25,7 +25,34 @@ STRICT RULES:
 ### 2. Check all target_files are present in changed_files
 If any `target_files` entry is missing from `changed_files` → FAIL.
 
-### 3. Check each evaluation_criterion by reading actual files
+### 3. Mandatory cross-checks (FAIL immediately on any violation)
+
+Run these checks regardless of what `evaluation_criteria` says — they are always required.
+
+**[Cross-check 1] configKey consistency**
+1. Read the RestClient Java file → extract `configKey` value from `@RegisterRestClient(configKey = "...")`
+2. Read `application.properties` → find `quarkus.rest-client.<X>.url`
+3. `<X>` MUST exactly match the `configKey` value
+   → Mismatch → FAIL: "configKey '<A>' in RestClient does not match property key '<B>' in application.properties"
+
+**[Cross-check 2] CDI injection on RestClient field**
+1. Read the MCP Server Java file → find the RestClient field
+2. Check that BOTH `@Inject` AND `@RestClient` are present on that field (order does not matter)
+   → `@RestClient` present without `@Inject` → FAIL: "@Inject missing on RestClient field — CDI injection will not trigger, runtime NPE guaranteed"
+
+**[Cross-check 3] CORS property key**
+1. Read `application.properties`
+   → `quarkus.http.cors=true` found → FAIL: "Deprecated CORS key — replace with quarkus.http.cors.enabled=true"
+
+**[Cross-check 4] throws declaration on @Tool methods**
+1. Read the MCP Server Java file → scan each `@Tool`-annotated method signature
+   → Any method declares `throws` → FAIL: "throws declaration on @Tool method '<method>' — catch JsonProcessingException internally and return ToolResponse.error()"
+
+**[Cross-check 5] ObjectMapper instantiation**
+1. Read the MCP Server Java file → search for `new ObjectMapper()`
+   → Found → FAIL: "ObjectMapper must be @Inject-ed, not instantiated directly"
+
+### 4. Check each evaluation_criterion by reading actual files
 
 ONLY use static file inspection. NEVER run shell commands, mvn, java, or any build tools.
 
@@ -34,19 +61,21 @@ ONLY use static file inspection. NEVER run shell commands, mvn, java, or any bui
 | Annotation present | Read the Java file, search for the annotation text |
 | Dependency in pom.xml | Read `pom.xml`, search for the `<artifactId>` text |
 | Property set | Read `application.properties`, search for the key=value line |
-| Kubernetes sidecar | Read the YAML, confirm two containers exist with the correct ports |
+| Kubernetes sidecar | Read the YAML — confirm two containers exist AND sidecar declares `containerPort: 8888` |
+| Test file exists | Check `code.json` `added_tests` is non-empty; verify each listed file exists on disk |
 | pom.xml not modified | Check `code.json` `changed_files` — pom.xml must NOT appear there |
 
 Any criterion that says "starts successfully", "responds on port", "compiles", or "runs" —
 evaluate it by STATIC CODE INSPECTION ONLY. Do not execute anything.
 
-### 4. Check for out-of-scope changes
+### 5. Check for out-of-scope changes
 If `code.json` `changed_files` contains any file NOT in `plan.json` `target_files` → FAIL.
 
-### 5. Check recommended criteria (warnings only)
-- MCP tool methods have meaningful `description` attributes
-- Kubernetes sidecar has resource limits defined
+### 6. Check recommended criteria (warnings only)
+- MCP tool methods have `description` attributes with meaningful text (not empty, not "TODO")
+- Kubernetes sidecar has `resources.limits` defined
 - No hardcoded credentials in any file
+- Response types use `Map<String, Object>` (note as tech debt, not a failure)
 
 ---
 

@@ -44,15 +44,24 @@ Three artifacts are always required:
 - Do NOT modify the legacy application's source code
 - Only expose read (GET) operations unless explicitly requested
 - MCP server must run on port 8888 (`quarkus.http.port=8888`)
-- CORS must be enabled (`quarkus.http.cors=true`)
+- CORS must be enabled using `quarkus.http.cors.enabled=true` — **NOT** `quarkus.http.cors=true` (deprecated in Quarkus 3.x)
 - Use `@Tool` from `io.quarkiverse.mcp.server` (NOT LangChain4j)
 - Return type must be `ToolResponse` with `TextContent`
 - `pom.xml` must NOT be modified if both dependencies are already present
+- Define a `configKey` value for the RestClient and include it in `constraints` — Generator and Evaluator must use the same value
 
 ### 5. Define evaluation criteria
 Each criterion must be verifiable by STATIC FILE INSPECTION ONLY.
 NEVER include runtime criteria such as "compiles successfully", "starts on port X", "responds to requests", or "mvn quarkus:dev works".
-Only include criteria that can be verified by reading file contents: annotations present, properties set, files exist, YAML structure correct.
+
+The following criteria are ALWAYS required — include them in every plan:
+- `@Inject` AND `@RestClient` both present on the RestClient field in the MCP Server class
+- `@RegisterRestClient(configKey)` value matches `quarkus.rest-client.<configKey>.url` key in `application.properties`
+- `quarkus.http.cors.enabled=true` present in `application.properties`
+- No `throws` declaration on any `@Tool` method
+- No `new ObjectMapper()` instantiation in any generated Java file
+- Test file exists for each generated Java class (`added_tests` non-empty in `code.json`)
+- Kubernetes YAML contains exactly two containers with sidecar `containerPort: 8888`
 
 ---
 
