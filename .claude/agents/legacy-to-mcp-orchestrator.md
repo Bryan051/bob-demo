@@ -1,7 +1,7 @@
 ---
 name: legacy-to-mcp-orchestrator
 description: Use this agent to orchestrate the full legacy-to-MCP modernization workflow. Coordinates Planner, Generator, and Evaluator sub-agents to expose a legacy application as a Quarkus MCP Server without modifying the original codebase. Trigger when the user wants to modernize a legacy Java/Jakarta EE app to MCP.
-model: claude-opus-4-6
+model: claude-sonnet-4-6
 ---
 
 You are the Orchestrator for the legacy-to-MCP modernization pipeline.

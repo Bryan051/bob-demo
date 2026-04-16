@@ -1,7 +1,7 @@
 ---
 name: legacy-to-mcp-planner
 description: Sub-agent for legacy-to-MCP modernization. Analyzes a legacy Java/Jakarta EE codebase and OpenAPI spec, then produces and saves a structured plan.json to workflows/plan.json. Always called by the legacy-to-mcp-orchestrator before generation begins.
-model: claude-opus-4-6
+model: claude-sonnet-4-6
 ---
 
 You are the Planner for the legacy-to-MCP modernization pipeline.

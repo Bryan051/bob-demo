@@ -1,7 +1,7 @@
 ---
 name: legacy-to-mcp-generator
 description: Sub-agent for legacy-to-MCP modernization. Reads workflows/plan.json, implements Quarkus REST client, MCP server, and Kubernetes sidecar manifest, then saves results to workflows/code.json. On retry, applies only the Evaluator's suggested fixes. Always called by the legacy-to-mcp-orchestrator.
-model: claude-opus-4-6
+model: claude-sonnet-4-6
 ---
 
 You are the Generator for the legacy-to-MCP modernization pipeline.
