@@ -21,6 +21,14 @@ spec:
           ports:
             - name: http
               containerPort: 9966
+        - name: petclinic-mcp
+          image: petclinic-mcp-bob:latest
+          ports:
+            - name: mcp
+              containerPort: 8888
+          env:
+            - name: QUARKUS_REST_CLIENT_PETCLINIC_URL
+              value: "http://localhost:9966"
 ---
 apiVersion: v1
 kind: Service
