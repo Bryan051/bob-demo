@@ -1,10 +1,10 @@
 {
   "target_files": {
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java": "POJO model class for Pet entity based on OpenAPI spec (id, name, birthDate, type, ownerId, visits fields)",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java": "MicroProfile REST Client interface with @RegisterRestClient(configKey='petclinic') for GET /api/pets and GET /api/pets/{petId}",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java": "Quarkus MCP Server tool class wrapping PetRestClient with @Tool-annotated methods returning ToolResponse",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/resources/application.properties": "Add quarkus.http.port=8888, quarkus.http.cors=true, quarkus.rest-client.petclinic.url=http://localhost:9966",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml": "Add petclinic-mcp sidecar container with containerPort 8888 to existing Deployment spec"
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java": "POJO model class for Pet entity based on OpenAPI spec (id, name, birthDate, type, ownerId, visits fields)",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java": "MicroProfile REST Client interface with @RegisterRestClient(configKey='petclinic') for GET /api/pets and GET /api/pets/{petId}",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java": "Quarkus MCP Server tool class wrapping PetRestClient with @Tool-annotated methods returning ToolResponse",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/resources/application.properties": "Add quarkus.http.port=8888, quarkus.http.cors=true, quarkus.rest-client.petclinic.url=http://localhost:9966",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml": "Add petclinic-mcp sidecar container with containerPort 8888 to existing Deployment spec"
   },
   "tech_debt": {
     "application.properties is empty — no configuration baseline exists": "high",
@@ -21,32 +21,32 @@
     {
       "order": 1,
       "task": "Verify pom.xml already contains both quarkus-rest-client-jackson and quarkus-mcp-server-http dependencies — DO NOT modify pom.xml",
-      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/pom.xml"
+      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/pom.xml"
     },
     {
       "order": 2,
       "task": "Create Pet.java POJO in package org.acme with fields: Integer id, String name, String birthDate, Object type, Integer ownerId — use Jackson-compatible annotations for JSON deserialization",
-      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java"
+      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java"
     },
     {
       "order": 3,
       "task": "Create PetRestClient.java: Jakarta REST interface in package org.acme annotated with @Path(\"/api/pets\") and @RegisterRestClient(configKey=\"petclinic\"); define @GET List<Pet> getPets() and @GET @Path(\"/{petId}\") Pet getPetById(@PathParam(\"petId\") int petId)",
-      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java"
+      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java"
     },
     {
       "order": 4,
       "task": "Create PetMcpServer.java: @ApplicationScoped CDI bean in package org.acme; inject @RestClient PetRestClient; implement two @Tool-annotated methods — listPets() and getPetById(@ToolArg int petId) — both returning ToolResponse.success(new TextContent(...)) with JSON string of result; all MCP imports from io.quarkiverse.mcp.server.*",
-      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java"
+      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java"
     },
     {
       "order": 5,
       "task": "Update application.properties: add quarkus.http.port=8888, quarkus.http.cors=true, quarkus.rest-client.petclinic.url=http://localhost:9966",
-      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/resources/application.properties"
+      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/resources/application.properties"
     },
     {
       "order": 6,
       "task": "Modify petclinic-kubernetes.yaml Deployment spec: add a second container entry named petclinic-mcp using image org.acme/petclinic-mcp-bob:latest with containerPort 8888, alongside the existing petclinic container",
-      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+      "target_file": "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
     }
   ],
   "constraints": [
@@ -57,7 +57,7 @@
     "Use @Tool from io.quarkiverse.mcp.server — NOT LangChain4j",
     "Return type must be ToolResponse with TextContent (io.quarkiverse.mcp.server.ToolResponse and io.quarkiverse.mcp.server.TextContent)",
     "pom.xml must NOT be modified — both quarkus-rest-client-jackson and quarkus-mcp-server-http are already present",
-    "All new Java source files go under legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/",
+    "All new Java source files go under legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/",
     "Legacy PetClinic REST service runs on port 9966 (confirmed from Kubernetes manifest)",
     "Quarkus platform version is 3.32.1 with Java 25 compiler target"
   ],

@@ -22,6 +22,6 @@
   "failed": [],
   "suggestion": "",
   "warnings": [
-    "Kubernetes sidecar container petclinic-mcp in petclinic-kubernetes.yaml has no resource limits defined (requests/limits for cpu and memory)"
+    "Kubernetes sidecar container 'petclinic-mcp' does not define resource limits (requests/limits for CPU and memory) — recommended for production workloads"
   ]
 }

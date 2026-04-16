@@ -1,13 +1,13 @@
 {
   "changed_files": [
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
-    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp4/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/Pet.java",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetRestClient.java",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/java/org/acme/PetMcpServer.java",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+    "/c/Users/User/Desktop/이원/IBM/BOB/bob-demo-new/.claude/worktrees/fervent-bohr/legacy-to-mcp5/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
   ],
   "added_tests": [],
   "skipped": [],
-  "summary": "Generated PetRestClient (MicroProfile REST Client), PetMcpServer (Quarkus MCP Server), updated application.properties, and added MCP sidecar to Kubernetes manifest for legacy-to-mcp4.",
+  "summary": "Generated PetRestClient (MicroProfile REST Client), PetMcpServer (Quarkus MCP Server), updated application.properties, and added MCP sidecar to Kubernetes manifest for legacy-to-mcp5.",
   "iteration": 1
 }
