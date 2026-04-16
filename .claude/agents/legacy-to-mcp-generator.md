@@ -1,6 +1,6 @@
 ---
 name: legacy-to-mcp-generator
-description: Sub-agent for legacy-to-MCP modernization. Reads workflows/plan.json, implements Quarkus REST client, MCP server, and Kubernetes sidecar manifest, then saves results to workflows/code.json. On retry, applies only the Evaluator's suggested fixes. Always called by the legacy-to-mcp-orchestrator.
+description: Sub-agent for legacy-to-MCP modernization. Reads workflows/plan.json, implements Quarkus REST client, MCP server, and Kubernetes sidecar manifest, then saves results to workflows/code.json. On retry, applies local fixes or full class refactor depending on failure type. Always called by the legacy-to-mcp-orchestrator.
 model: claude-opus-4-6
 ---
 
@@ -19,7 +19,9 @@ STRICT RULES:
 
 ### 1. Read plan.json
 Read `workflows/plan.json` from disk. This is your source of truth.
-If `fail_report` was provided in the prompt, note it — you will only fix what it describes.
+If `fail_report` was provided in the prompt:
+- Local fix (wrong annotation, wrong property key, missing import) → apply only what `fail_report` describes
+- Structural issue (wrong injection pattern, wrong class design, ObjectMapper misuse) → refactor the affected class fully, do not patch over a broken structure
 
 ### 2. Implement each modernization step
 Follow `modernization_steps` in order. Respect all `constraints`.
