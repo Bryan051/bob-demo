@@ -72,7 +72,8 @@ Agent(
   Working directory: <cwd>
   Read workflows/plan.json.
   fail_report: <paste suggestion from workflows/evaluation.json>
-  Apply only the fixes described in fail_report.
+  If fail_report describes a local fix (wrong annotation, wrong key), apply only those changes.
+  If fail_report signals a structural issue (wrong injection pattern, wrong class design), refactor the affected class fully.
   """
 )
 ```
