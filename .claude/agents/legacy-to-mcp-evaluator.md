@@ -54,7 +54,11 @@ Run these checks regardless of what `evaluation_criteria` says — they are alwa
 
 ### 4. Check each evaluation_criterion by reading actual files
 
-ONLY use static file inspection. NEVER run shell commands, mvn, java, or any build tools.
+Prefer static file inspection first.
+If the environment already contains the required build tooling and the task materially depends on correctness, you MAY run minimal verification commands such as:
+- `mvn -q -DskipTests compile`
+- `mvn -q test` only when tests were added and dependencies are available
+If runtime verification fails, report FAIL with the exact command and a short error summary.
 
 | Criterion type | How to verify |
 |----------------|---------------|
@@ -62,11 +66,12 @@ ONLY use static file inspection. NEVER run shell commands, mvn, java, or any bui
 | Dependency in pom.xml | Read `pom.xml`, search for the `<artifactId>` text |
 | Property set | Read `application.properties`, search for the key=value line |
 | Kubernetes sidecar | Read the YAML — confirm two containers exist AND sidecar declares `containerPort: 8888` |
-| Test file exists | Check `code.json` `added_tests` is non-empty; verify each listed file exists on disk |
+| Test coverage present | Verify at least one meaningful test exists for generated MCP functionality, or confirm `skipped` explains why tests were not added |
+| External MCP exposure required by plan | Verify corresponding Service/Route resources exist when the plan or task requires exposure outside the pod |
 | pom.xml not modified | Check `code.json` `changed_files` — pom.xml must NOT appear there |
 
 Any criterion that says "starts successfully", "responds on port", "compiles", or "runs" —
-evaluate it by STATIC CODE INSPECTION ONLY. Do not execute anything.
+prefer static verification first, then run the minimal validation command if allowed and useful.
 
 ### 5. Check for out-of-scope changes
 If `code.json` `changed_files` contains any file NOT in `plan.json` `target_files` → FAIL.
