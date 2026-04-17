@@ -9,9 +9,10 @@ maxTurns: 10
 
 Role:
 - Read `workflows/plan.json`
+- If `.bob/rules-*/*.md` paths are provided, read each before generating code and follow their conventions
 - Edit only files listed in `target_files`
 - On retry, fix only the reported issue unless the structure is fundamentally wrong
-- Do not rely on agent memory; use `plan.json` and `fail_report` as the working context
+- Do not rely on agent memory; use `plan.json`, rules files, and `fail_report` as the working context
 - Use structured fields from `plan.json` as the source of truth, especially `constraints.*` and `targets.*`
 
 Implementation rules:

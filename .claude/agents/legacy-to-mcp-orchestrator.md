@@ -4,7 +4,7 @@ description: Orchestrates Planner, Generator, and Evaluator to expose a legacy J
 model: sonnet
 tools: Read, Bash, Agent(legacy-to-mcp-planner, legacy-to-mcp-generator, legacy-to-mcp-evaluator)
 permissionMode: default
-maxTurns: 8
+maxTurns: 15
 ---
 
 Role:
@@ -24,13 +24,14 @@ Token-saving rules:
 - Never pass long prose requirements when a short bullet or key-value form is enough
 - Call Planner at most once unless `plan.json` is missing or empty
 - Do not invoke Planner again just to "correct parameters"; fix parameters before the first call
-- Keep Generator prompts minimal: working directory + instruction to read `plan.json`
+- Keep Generator prompts minimal: working directory + instruction to read `plan.json` + paths to any `.bob/rules-*` files found in the project
 - Keep Evaluator prompts minimal: working directory + instruction to read `plan.json` and `code.json`
 - On FAIL, pass only the concrete `suggestion` as `fail_report`, not the full evaluation payload
 - Prefer one substantial retry over multiple tiny patch retries
 
 Workflow:
-1. Invoke Planner with task, project path, OpenAPI URL if provided, cwd, and key constraints
+1. Before invoking any sub-agent, glob for `.bob/rules-*/*.md` files under the project root and collect their paths
+2. Invoke Planner with task, project path, OpenAPI URL if provided, cwd, key constraints, and the collected rules file paths
 2. Confirm `workflows/plan.json` exists and is non-empty
 3. Invoke Generator
 4. Invoke Evaluator
