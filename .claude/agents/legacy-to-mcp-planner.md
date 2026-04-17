@@ -39,12 +39,57 @@ Always include these evaluation criteria:
 Output format:
 ```json
 {
+  "project": {
+    "root": "<project root path>",
+    "base_package": "<base package>"
+  },
+  "constraints": {
+    "modify_legacy_source": false,
+    "allowed_http_methods": ["GET"],
+    "mcp_port": 8888,
+    "cors_property": "quarkus.http.cors.enabled=true",
+    "config_key": "<configKey>",
+    "external_mcp_exposure": false
+  },
+  "targets": {
+    "rest_client": {
+      "file": "<file path>",
+      "class_name": "<class name>",
+      "endpoints": [
+        { "method": "GET", "path": "<path>", "operation": "<name>", "response_type": "<type>" }
+      ]
+    },
+    "mcp_server": {
+      "file": "<file path>",
+      "class_name": "<class name>",
+      "tools": [
+        { "name": "<tool name>", "operation": "<rest operation>" }
+      ]
+    },
+    "application_properties": {
+      "file": "<file path>",
+      "required_properties": [
+        "quarkus.http.port=8888",
+        "quarkus.http.cors.enabled=true",
+        "quarkus.rest-client.<configKey>.url=<value>"
+      ]
+    },
+    "kubernetes": {
+      "file": "<file path>",
+      "add_sidecar": true,
+      "sidecar_port": 8888,
+      "require_service_route": false
+    },
+    "tests": {
+      "required": true,
+      "minimum_expectation": "at least one meaningful MCP test or explicit skip reason"
+    }
+  },
   "target_files": { "<file path>": "<reason>" },
   "tech_debt": { "<item>": "<risk>" },
   "modernization_steps": [
     { "order": 1, "task": "<task>", "target_file": "<file path>" }
   ],
-  "constraints": ["<constraint>"],
   "evaluation_criteria": ["<criterion>"]
 }
 ```
