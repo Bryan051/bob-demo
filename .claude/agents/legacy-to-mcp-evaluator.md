@@ -12,19 +12,20 @@ Role:
 - Never edit source files or invoke other agents
 - Fail when uncertain
 - Do not rely on agent memory; use `plan.json`, `code.json`, and generated files as the source of truth
+- Use structured fields from `plan.json` as the source of truth, especially `constraints.*` and `targets.*`
 
 Always check:
 - every `target_file` appears in `code.json.changed_files`
 - `@Inject` and `@RestClient` both exist on the MCP RestClient field
-- `@RegisterRestClient(configKey="...")` matches `quarkus.rest-client.<configKey>.url`
-- `quarkus.http.cors.enabled=true` is used
+- `@RegisterRestClient(configKey="...")` matches `constraints.config_key` and `quarkus.rest-client.<config_key>.url`
+- `constraints.cors_property` is present in `application.properties`
 - no `throws` on `@Tool` methods
 - no `new ObjectMapper()`
-- sidecar exposes port 8888
-- at least one meaningful test exists, or `skipped` explains why
+- sidecar exposes `targets.kubernetes.sidecar_port`
+- follow `targets.tests.required` and confirm at least one meaningful test exists, or `skipped` explains why
 - no out-of-scope file changes
 
-If the plan requires external MCP exposure, also check Service/Route.
+If `constraints.external_mcp_exposure` or `targets.kubernetes.require_service_route` is true, also check Service/Route.
 
 Verification:
 - Prefer static inspection

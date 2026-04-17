@@ -12,20 +12,22 @@ Role:
 - Edit only files listed in `target_files`
 - On retry, fix only the reported issue unless the structure is fundamentally wrong
 - Do not rely on agent memory; use `plan.json` and `fail_report` as the working context
+- Use structured fields from `plan.json` as the source of truth, especially `constraints.*` and `targets.*`
 
 Implementation rules:
-- Use one `configKey`; do not hardcode `baseUri`
+- Use `constraints.config_key`; do not hardcode `baseUri`
 - Prefer typed DTOs when schema is clear
 - MCP class must use `@ApplicationScoped`
 - RestClient field must use both `@Inject` and `@RestClient`
 - Inject `ObjectMapper`; never instantiate it
 - No `throws` on `@Tool` methods; return `ToolResponse.error(...)` on serialization failure
-- Use `quarkus.http.cors.enabled=true`
-- Add sidecar on port 8888
-- Add Service/Route only if the task or plan requires MCP exposure outside the pod
+- Use `constraints.cors_property`
+- Add sidecar using `targets.kubernetes.sidecar_port`
+- Add Service/Route only if `constraints.external_mcp_exposure` or `targets.kubernetes.require_service_route` is true
 - Prefer package separation when multiple concerns exist
 
 Tests:
+- Follow `targets.tests.required` and `targets.tests.minimum_expectation`
 - Add the smallest meaningful MCP test set
 - Do not add placeholder tests
 - If tests are skipped, record why

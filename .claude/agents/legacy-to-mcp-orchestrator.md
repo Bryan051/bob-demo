@@ -39,6 +39,9 @@ Workflow:
    - `plan.json.target_files` vs `code.json.changed_files`
    - `code.json.skipped`
    - `evaluation.json.warnings`
+   - `plan.json.constraints.external_mcp_exposure`
+   - `plan.json.constraints.config_key`
+   - `plan.json.targets.kubernetes.require_service_route`
    - whether deployment output matches the requested exposure model
 7. If final consistency review finds a material gap, treat as FAIL and do one more Generator/Evaluator pass within the retry limit
 
