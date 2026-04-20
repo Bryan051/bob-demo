@@ -1,0 +1,17 @@
+{
+  "changed_files": [
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java",
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java",
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Visit.java",
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java",
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+  ],
+  "added_tests": [
+    "legacy-to-mcp10/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java"
+  ],
+  "skipped": [],
+  "summary": "Created PetclinicMcpServer (@ApplicationScoped) with three @Tool methods (listPets, getPet, getOwnersPet) injecting PetclinicRestClient via @Inject @RestClient and ObjectMapper via @Inject — no throws on any @Tool method, errors caught and returned as ToolResponse.error. Populated application.properties with port 8888, CORS, and rest-client URL using configKey=petclinic. Added petclinic-mcp sidecar container on port 8888 with QUARKUS_REST_CLIENT_PETCLINIC_URL env var to existing Deployment without touching petclinic container, Service, or Route. Added PetclinicMcpServerTest with three tests: listPets success, getPet success, and getPet error path using @InjectMock @RestClient.",
+  "iteration": 1
+}

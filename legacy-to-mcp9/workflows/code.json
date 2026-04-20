@@ -1,0 +1,16 @@
+{
+  "changed_files": [
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+  ],
+  "added_tests": [
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java"
+  ],
+  "skipped": [],
+  "summary": "Implemented Quarkus MCP sidecar for Petclinic: typed DTOs (Pet, PetType), MicroProfile REST client, ApplicationScoped MCP server with @Tool methods, application.properties with config_key-based baseUri, and Kubernetes manifest with sidecar port. Added MCP server unit test.",
+  "iteration": 1
+}

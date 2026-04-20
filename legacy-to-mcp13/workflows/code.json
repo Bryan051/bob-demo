@@ -1,0 +1,50 @@
+{
+  "status": "generated",
+  "files_created": [
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/PetType.java",
+      "purpose": "DTO for PetType schema: id (int), name (string)"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Visit.java",
+      "purpose": "DTO for Visit schema"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Pet.java",
+      "purpose": "DTO for Pet schema: id, name, birthDate, type (PetType), ownerId, visits (List<Visit>)"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Owner.java",
+      "purpose": "DTO for Owner schema: id, firstName, lastName, address, city, telephone, pets (List<Pet>)"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicService.java",
+      "purpose": "MicroProfile REST Client interface with @RegisterRestClient(configKey='petclinic') and all 7 GET endpoints"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+      "purpose": "Quarkus MCP server with @Tool methods wrapping each REST endpoint, returning ToolResponse with TextContent"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java",
+      "purpose": "Quarkus test verifying listPetTypes and error handling in getPet"
+    }
+  ],
+  "files_modified": [
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+      "changes": "Set quarkus.http.port=8888, quarkus.http.cors.enabled=true, quarkus.rest-client.petclinic.url=http://localhost:9966/petclinic/api"
+    },
+    {
+      "path": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml",
+      "changes": "Added sidecar container petclinic-mcp with image petclinic-mcp:latest exposing containerPort 8888"
+    }
+  ],
+  "notes": [
+    "All 7 GET endpoints implemented in PetclinicService and wrapped as @Tool methods in PetclinicMcpServer",
+    "ObjectMapper injected via @Inject, not instantiated directly",
+    "No throws declared on @Tool methods; exceptions caught and returned as ToolResponse.error()",
+    "PetclinicService uses @RegisterRestClient(configKey='petclinic') matching application.properties key",
+    "pom.xml unchanged — all required dependencies already present"
+  ]
+}

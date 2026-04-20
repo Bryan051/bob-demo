@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(bash -c \"echo test: \\\\$\\(cat ~/.claude/statusline-command.sh | head -1\\)\")",
+      "Bash(bash -c \"ls /mnt/c/Users/User/.claude/ 2>/dev/null || echo 'no /mnt/c path'\")",
+      "Bash(bash /c/Users/User/.claude/statusline-command.sh)",
+      "Bash(jq --version)",
+      "Bash(chmod +x *)",
+      "Bash(~/.claude/statusline.sh)"
     ]
   }
 }

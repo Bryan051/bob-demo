@@ -1,0 +1,114 @@
+{
+  "project": {
+    "root": "legacy-to-mcp9/input-documents/petclinic-mcp-bob",
+    "base_package": "org.acme"
+  },
+  "constraints": {
+    "modify_legacy_source": false,
+    "allowed_http_methods": ["GET"],
+    "mcp_port": 8888,
+    "cors_property": "quarkus.http.cors.enabled=true",
+    "config_key": "petclinic",
+    "external_mcp_exposure": false
+  },
+  "targets": {
+    "rest_client": {
+      "file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java",
+      "class_name": "PetclinicRestClient",
+      "endpoints": [
+        { "method": "GET", "path": "/pets", "operation": "listPets", "response_type": "List<Pet>" },
+        { "method": "GET", "path": "/pets/{petId}", "operation": "getPet", "response_type": "Pet" },
+        { "method": "GET", "path": "/owners/{ownerId}/pets/{petId}", "operation": "getOwnersPet", "response_type": "Pet" }
+      ]
+    },
+    "mcp_server": {
+      "file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+      "class_name": "PetclinicMcpServer",
+      "tools": [
+        { "name": "listPets", "operation": "listPets" },
+        { "name": "getPet", "operation": "getPet" },
+        { "name": "getOwnersPet", "operation": "getOwnersPet" }
+      ]
+    },
+    "application_properties": {
+      "file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+      "required_properties": [
+        "quarkus.http.port=8888",
+        "quarkus.http.cors.enabled=true",
+        "quarkus.rest-client.petclinic.url=http://localhost:9966"
+      ]
+    },
+    "kubernetes": {
+      "file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml",
+      "add_sidecar": true,
+      "sidecar_port": 8888,
+      "require_service_route": false
+    },
+    "tests": {
+      "required": true,
+      "minimum_expectation": "at least one meaningful MCP test or explicit skip reason"
+    }
+  },
+  "target_files": {
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java": "new REST client interface with @RegisterRestClient(configKey=\"petclinic\") exposing listPets, getPet, getOwnersPet GET endpoints",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java": "new typed DTO for Pet schema (id, name, birthDate, type, ownerId, visits)",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java": "new typed DTO for PetType schema (id, name)",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java": "new MCP server class wrapping REST client calls as @Tool methods using ToolResponse + TextContent",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/resources/application.properties": "add port 8888, CORS enabled, and petclinic rest-client URL pointing to localhost:9966",
+    "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml": "add MCP sidecar container to existing Deployment alongside petclinic container, exposing port 8888"
+  },
+  "tech_debt": {
+    "Visit DTO not modeled": "visits field on Pet is List<Visit> but Visit schema was not provided; use raw List<Object> or a minimal Visit stub until schema is confirmed — risk of deserialization failure if Visit fields are non-trivial",
+    "No TLS on sidecar port": "sidecar listens on plain HTTP 8888 inside the pod; acceptable for in-cluster loopback but should be reviewed if network policy is tightened",
+    "application.properties currently empty": "all required properties must be added from scratch; no existing values to preserve, but any future properties added by other means will not be detected by this plan"
+  },
+  "modernization_steps": [
+    {
+      "order": 1,
+      "task": "Create PetType DTO with fields id (Integer) and name (String, required, max 80)",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java"
+    },
+    {
+      "order": 2,
+      "task": "Create Pet DTO with fields id (Integer, read-only), name (String, max 30), birthDate (LocalDate, required), type (PetType, required), ownerId (Integer, read-only), visits (List<Object>, read-only)",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java"
+    },
+    {
+      "order": 3,
+      "task": "Create PetclinicRestClient interface annotated with @RegisterRestClient(configKey=\"petclinic\") and @Path; declare listPets(), getPet(@PathParam(\"petId\") int petId), getOwnersPet(@PathParam(\"ownerId\") int ownerId, @PathParam(\"petId\") int petId) — all GET, no throws",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java"
+    },
+    {
+      "order": 4,
+      "task": "Create PetclinicMcpServer @ApplicationScoped class; inject PetclinicRestClient with @Inject @RestClient and ObjectMapper with @Inject; implement three @Tool methods (listPets, getPet, getOwnersPet) each returning ToolResponse wrapping TextContent — no throws declarations, catch exceptions internally",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java"
+    },
+    {
+      "order": 5,
+      "task": "Populate application.properties with quarkus.http.port=8888, quarkus.http.cors.enabled=true, quarkus.rest-client.petclinic.url=http://localhost:9966",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/resources/application.properties"
+    },
+    {
+      "order": 6,
+      "task": "Add MCP sidecar container to the Deployment spec in petclinic-kubernetes.yaml alongside the existing petclinic container; sidecar image should be the built Quarkus MCP image, containerPort 8888; no new Service or Route required",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+    },
+    {
+      "order": 7,
+      "task": "Write at least one Quarkus test for PetclinicMcpServer using @QuarkusTest and WireMock (or @InjectMock) to verify a @Tool method returns a non-empty ToolResponse; alternatively document explicit skip reason in a @Disabled annotation",
+      "target_file": "legacy-to-mcp9/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java"
+    }
+  ],
+  "evaluation_criteria": [
+    "@Inject and @RestClient are both present on the PetclinicRestClient field inside PetclinicMcpServer",
+    "configKey value 'petclinic' matches the property key quarkus.rest-client.petclinic.url in application.properties",
+    "no throws clause on any @Tool-annotated method in PetclinicMcpServer",
+    "no new ObjectMapper() instantiation anywhere in the MCP server or REST client code",
+    "at least one meaningful MCP test exists in the test sources or an explicit skip reason is documented",
+    "sidecar container in petclinic-kubernetes.yaml exposes containerPort 8888",
+    "legacy Deployment container (petclinic) is not modified",
+    "PetclinicRestClient uses @RegisterRestClient(configKey=\"petclinic\") with no hardcoded baseUri",
+    "Pet and PetType are typed DTOs, not raw Map or JsonNode",
+    "quarkus.http.port=8888 and quarkus.http.cors.enabled=true are both present in application.properties"
+  ]
+}

@@ -1,18 +1,17 @@
 ---
 name: legacy-to-mcp-planner
-description: Reads the target project and writes a minimal modernization plan to workflows/plan.json.
+description: Receives pre-gathered project context and writes a modernization plan to workflows/plan.json.
 model: sonnet
-tools: Read, Glob, Grep, Bash, Write
+tools: Write
 permissionMode: acceptEdits
-maxTurns: 4
+maxTurns: 3
 ---
 
 Role:
-- Read the target project and produce one file: `workflows/plan.json`
-- If `.bob/rules-*/*.md` paths are provided, read each file and incorporate their conventions into `plan.json` constraints and evaluation criteria
+- Receive all project context from the prompt (rules, endpoints, DTOs, existing files)
+- Produce one file: `workflows/plan.json`
+- Do NOT read files or fetch URLs — all necessary information is provided in the prompt
 - Never edit source files or invoke other agents
-- Keep analysis narrow: inspect only files needed to plan the MCP sidecar work
-- Do not rely on agent memory; use only the current project files and request
 
 Plan goals:
 - REST client for requested GET endpoints
@@ -26,8 +25,12 @@ Always include these constraints:
 - GET only unless asked otherwise
 - use `quarkus.http.cors.enabled=true`
 - use `@Tool` + `ToolResponse` + `TextContent`
-- prefer typed DTOs when schema is clear
-- use one explicit `configKey`
+- prefer typed DTOs when schema is clear; include all nested schemas (e.g. Visit) found in the spec
+- use one explicit `configKey`; never use `baseUri`
+- REST client interface must declare `@Produces(MediaType.APPLICATION_JSON)`
+- each `@Tool` description must include what the tool does, its parameters, and what it returns
+- every `@Tool` method parameter must be annotated with `@ToolArg(description = "...")` describing the parameter meaning and example value
+- include `rules_files` array in the plan listing all `.bob/rules-*/*.md` paths found in the project
 
 Always include these evaluation criteria:
 - `@Inject` and `@RestClient` both present on the MCP RestClient field
@@ -36,6 +39,9 @@ Always include these evaluation criteria:
 - no `new ObjectMapper()`
 - at least one meaningful MCP test or explicit skip reason
 - sidecar container exposes port 8888
+- `@Produces(MediaType.APPLICATION_JSON)` present on the REST client interface
+- each `@Tool` description mentions parameters and return value
+- every `@Tool` method parameter has `@ToolArg(description = "...")` annotation
 
 Output format:
 ```json
@@ -64,7 +70,7 @@ Output format:
       "file": "<file path>",
       "class_name": "<class name>",
       "tools": [
-        { "name": "<tool name>", "operation": "<rest operation>" }
+        { "name": "<tool name>", "operation": "<rest operation>", "args": [{ "name": "<param>", "description": "<what it means and example>" }] }
       ]
     },
     "application_properties": {
@@ -86,6 +92,7 @@ Output format:
       "minimum_expectation": "at least one meaningful MCP test or explicit skip reason"
     }
   },
+  "rules_files": ["<.bob/rules-*/*.md path>"],
   "target_files": { "<file path>": "<reason>" },
   "tech_debt": { "<item>": "<risk>" },
   "modernization_steps": [

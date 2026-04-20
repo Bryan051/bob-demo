@@ -1,0 +1,17 @@
+{
+  "changed_files": [
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Visit.java",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+  ],
+  "added_tests": [
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java"
+  ],
+  "skipped": [],
+  "summary": "Generated Quarkus MCP sidecar for Spring PetClinic REST API: typed DTOs (Pet, PetType, Visit), REST client with 5 GET endpoints using configKey='petclinic', MCP server with 5 @Tool methods each with @ToolArg annotations and detailed descriptions, application.properties with port 8888 and CORS, Kubernetes sidecar, and 7 unit tests.",
+  "iteration": 1
+}

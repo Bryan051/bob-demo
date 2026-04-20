@@ -21,6 +21,8 @@ Always check:
 - `constraints.cors_property` is present in `application.properties`
 - no `throws` on `@Tool` methods
 - no `new ObjectMapper()`
+- every `@Tool` method parameter has `@ToolArg(description = "...")` annotation — FAIL if any parameter is missing it
+- every `@Tool(description = "...")` mentions: what the tool does, its parameters, and what it returns — FAIL if description is too brief to be useful
 - sidecar exposes `targets.kubernetes.sidecar_port`
 - follow `targets.tests.required` and confirm at least one meaningful test exists, or `skipped` explains why
 - no out-of-scope file changes
@@ -35,7 +37,6 @@ Verification:
 - If a verification command fails, return FAIL with the command and short error summary
 
 Warnings only:
-- weak tool descriptions
 - missing `resources.limits`
 - hardcoded credentials
 - `Map<String, Object>` fallback

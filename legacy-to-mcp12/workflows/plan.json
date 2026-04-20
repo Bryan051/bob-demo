@@ -1,0 +1,163 @@
+{
+  "project": {
+    "root": "legacy-to-mcp12/input-documents/petclinic-mcp-bob",
+    "base_package": "org.acme"
+  },
+  "constraints": {
+    "modify_legacy_source": false,
+    "allowed_http_methods": ["GET"],
+    "mcp_port": 8888,
+    "cors_property": "quarkus.http.cors.enabled=true",
+    "config_key": "petclinic",
+    "external_mcp_exposure": false
+  },
+  "targets": {
+    "rest_client": {
+      "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java",
+      "class_name": "PetclinicRestClient",
+      "endpoints": [
+        { "method": "GET", "path": "/api/pets", "operation": "listPets", "response_type": "List<Pet>" },
+        { "method": "GET", "path": "/api/pets/{petId}", "operation": "getPet", "response_type": "Pet" },
+        { "method": "GET", "path": "/api/owners/{ownerId}/pets/{petId}", "operation": "getOwnersPet", "response_type": "Pet" },
+        { "method": "GET", "path": "/api/pettypes", "operation": "listPetTypes", "response_type": "List<PetType>" },
+        { "method": "GET", "path": "/api/pettypes/{petTypeId}", "operation": "getPetType", "response_type": "PetType" }
+      ]
+    },
+    "mcp_server": {
+      "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+      "class_name": "PetclinicMcpServer",
+      "tools": [
+        {
+          "name": "listPets",
+          "operation": "listPets",
+          "args": []
+        },
+        {
+          "name": "getPet",
+          "operation": "getPet",
+          "args": [
+            { "name": "petId", "description": "The numeric ID of the pet to retrieve. Example: 1" }
+          ]
+        },
+        {
+          "name": "getOwnersPet",
+          "operation": "getOwnersPet",
+          "args": [
+            { "name": "ownerId", "description": "The numeric ID of the owner. Example: 1" },
+            { "name": "petId", "description": "The numeric ID of the pet belonging to that owner. Example: 2" }
+          ]
+        },
+        {
+          "name": "listPetTypes",
+          "operation": "listPetTypes",
+          "args": []
+        },
+        {
+          "name": "getPetType",
+          "operation": "getPetType",
+          "args": [
+            { "name": "petTypeId", "description": "The numeric ID of the pet type. Example: 1" }
+          ]
+        }
+      ]
+    },
+    "application_properties": {
+      "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+      "required_properties": [
+        "quarkus.http.port=8888",
+        "quarkus.http.cors.enabled=true",
+        "quarkus.rest-client.petclinic.url=http://localhost:9966/petclinic"
+      ]
+    },
+    "kubernetes": {
+      "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml",
+      "add_sidecar": true,
+      "sidecar_port": 8888,
+      "require_service_route": false
+    },
+    "tests": {
+      "required": true,
+      "minimum_expectation": "at least one meaningful MCP test or explicit skip reason",
+      "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java"
+    },
+    "dtos": [
+      {
+        "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java",
+        "class_name": "Pet",
+        "fields": [
+          { "name": "id", "type": "Integer", "access": "readOnly" },
+          { "name": "name", "type": "String", "constraints": "maxLength 30" },
+          { "name": "birthDate", "type": "LocalDate", "constraints": "required" },
+          { "name": "type", "type": "PetType", "constraints": "required" },
+          { "name": "ownerId", "type": "Integer", "access": "readOnly" },
+          { "name": "visits", "type": "List<Visit>", "access": "readOnly" }
+        ]
+      },
+      {
+        "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java",
+        "class_name": "PetType",
+        "fields": [
+          { "name": "id", "type": "Integer", "access": "readOnly" },
+          { "name": "name", "type": "String", "constraints": "required, maxLength 80" }
+        ]
+      },
+      {
+        "file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Visit.java",
+        "class_name": "Visit",
+        "fields": [
+          { "name": "id", "type": "Integer", "access": "readOnly" },
+          { "name": "petId", "type": "Integer", "access": "readOnly" },
+          { "name": "date", "type": "LocalDate" },
+          { "name": "description", "type": "String" }
+        ]
+      }
+    ]
+  },
+  "rules_files": [
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/.bob/rules-quarkus-developer/01-spring-swagger-rest-inspector.md",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/.bob/rules-quarkus-developer/02-quarkus-rest-client.md",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/.bob/rules-quarkus-developer/03-quarkus-mcp-server.md"
+  ],
+  "target_files": {
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java": "Typed DTO for Pet entity from OpenAPI schema",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java": "Typed DTO for PetType entity from OpenAPI schema",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Visit.java": "Typed DTO for Visit entity nested inside Pet from OpenAPI schema",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java": "Quarkus REST client interface for Spring PetClinic pet endpoints",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java": "MCP server wrapping all five pet REST client operations as @Tool methods",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/resources/application.properties": "Quarkus config: port 8888, CORS enabled, rest-client URL for petclinic",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml": "Existing Kubernetes manifest — sidecar container added to Deployment only",
+    "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java": "Unit/integration test for PetclinicMcpServer tool methods"
+  },
+  "tech_debt": {
+    "no_pagination_support": "listPets and listPetTypes return full lists; large datasets may cause memory pressure",
+    "no_error_handling_dto": "REST client does not define custom exception mappers; upstream errors propagate as-is",
+    "localhost_url_hardcoded": "REST client URL points to localhost:9966 which assumes sidecar colocation; not portable outside Kubernetes pod"
+  },
+  "modernization_steps": [
+    { "order": 1, "task": "Create Visit DTO with id, petId, date, description fields", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Visit.java" },
+    { "order": 2, "task": "Create PetType DTO with id, name fields", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/PetType.java" },
+    { "order": 3, "task": "Create Pet DTO with id, name, birthDate, type, ownerId, visits fields", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/dto/Pet.java" },
+    { "order": 4, "task": "Create PetclinicRestClient interface with @RegisterRestClient(configKey=\"petclinic\"), @Produces(APPLICATION_JSON), and all five GET endpoints", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicRestClient.java" },
+    { "order": 5, "task": "Create PetclinicMcpServer with @Inject @RestClient PetclinicRestClient field and five @Tool methods using @ToolArg-annotated parameters", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java" },
+    { "order": 6, "task": "Update application.properties with quarkus.http.port=8888, quarkus.http.cors.enabled=true, quarkus.rest-client.petclinic.url", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/resources/application.properties" },
+    { "order": 7, "task": "Add MCP sidecar container (port 8888) to existing Deployment in petclinic-kubernetes.yaml without modifying Service or Route", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml" },
+    { "order": 8, "task": "Write PetclinicMcpServerTest with at least one meaningful test of a @Tool method using mocked REST client", "target_file": "legacy-to-mcp12/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java" }
+  ],
+  "evaluation_criteria": [
+    "@Inject and @RestClient both present on the PetclinicRestClient field in PetclinicMcpServer",
+    "configKey 'petclinic' in @RegisterRestClient matches quarkus.rest-client.petclinic.url in application.properties",
+    "No throws declarations on any @Tool-annotated method",
+    "No new ObjectMapper() instantiation anywhere",
+    "At least one meaningful MCP test or explicit skip reason in PetclinicMcpServerTest",
+    "Sidecar container in petclinic-kubernetes.yaml exposes containerPort 8888",
+    "Legacy Deployment, Service, Route in petclinic-kubernetes.yaml are not modified",
+    "All five GET endpoints declared in PetclinicRestClient",
+    "All five endpoints wrapped as @Tool methods in PetclinicMcpServer",
+    "Typed DTOs (Pet, PetType, Visit) used — no raw Map or JsonNode",
+    "quarkus.http.port=8888 present in application.properties",
+    "quarkus.http.cors.enabled=true present in application.properties",
+    "@Produces(MediaType.APPLICATION_JSON) present on PetclinicRestClient interface",
+    "Every @Tool method parameter has @ToolArg(description = \"...\") annotation",
+    "Every @Tool(description = \"...\") mentions what the tool does, its parameters, and what it returns"
+  ]
+}

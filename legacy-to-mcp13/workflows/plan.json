@@ -1,0 +1,323 @@
+{
+  "project": {
+    "root": "legacy-to-mcp13/input-documents/petclinic-mcp-bob",
+    "base_package": "org.acme"
+  },
+  "constraints": {
+    "modify_legacy_source": false,
+    "allowed_http_methods": ["GET"],
+    "mcp_port": 8888,
+    "cors_property": "quarkus.http.cors.enabled=true",
+    "config_key": "petclinic",
+    "external_mcp_exposure": false
+  },
+  "targets": {
+    "rest_client": {
+      "file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicService.java",
+      "class_name": "PetclinicService",
+      "endpoints": [
+        { "method": "GET", "path": "/pettypes", "operation": "listPetTypes", "response_type": "List<PetType>" },
+        { "method": "GET", "path": "/pettypes/{petTypeId}", "operation": "getPetType", "response_type": "PetType" },
+        { "method": "GET", "path": "/pets", "operation": "listPets", "response_type": "List<Pet>" },
+        { "method": "GET", "path": "/pets/{petId}", "operation": "getPet", "response_type": "Pet" },
+        { "method": "GET", "path": "/owners/{ownerId}/pets/{petId}", "operation": "getOwnersPet", "response_type": "Pet" },
+        { "method": "GET", "path": "/owners", "operation": "listOwners", "response_type": "List<Owner>" },
+        { "method": "GET", "path": "/owners/{ownerId}", "operation": "getOwner", "response_type": "Owner" }
+      ]
+    },
+    "mcp_server": {
+      "file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java",
+      "class_name": "PetclinicMcpServer",
+      "tools": [
+        {
+          "name": "listPetTypes",
+          "operation": "listPetTypes",
+          "args": []
+        },
+        {
+          "name": "getPetType",
+          "operation": "getPetType",
+          "args": [
+            { "name": "petTypeId", "description": "The numeric ID of the pet type to retrieve. Example: 1" }
+          ]
+        },
+        {
+          "name": "listPets",
+          "operation": "listPets",
+          "args": []
+        },
+        {
+          "name": "getPet",
+          "operation": "getPet",
+          "args": [
+            { "name": "petId", "description": "The numeric ID of the pet to retrieve. Example: 3" }
+          ]
+        },
+        {
+          "name": "getOwnersPet",
+          "operation": "getOwnersPet",
+          "args": [
+            { "name": "ownerId", "description": "The numeric ID of the owner who owns the pet. Example: 1" },
+            { "name": "petId", "description": "The numeric ID of the pet belonging to the owner. Example: 2" }
+          ]
+        },
+        {
+          "name": "listOwners",
+          "operation": "listOwners",
+          "args": [
+            { "name": "lastName", "description": "Optional last name filter for owners. Pass empty string to list all. Example: 'Smith'" }
+          ]
+        },
+        {
+          "name": "getOwner",
+          "operation": "getOwner",
+          "args": [
+            { "name": "ownerId", "description": "The numeric ID of the owner to retrieve. Example: 1" }
+          ]
+        }
+      ]
+    },
+    "application_properties": {
+      "file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/resources/application.properties",
+      "required_properties": [
+        "quarkus.http.port=8888",
+        "quarkus.http.cors.enabled=true",
+        "quarkus.rest-client.petclinic.url=http://localhost:9966/petclinic/api"
+      ]
+    },
+    "kubernetes": {
+      "file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml",
+      "add_sidecar": true,
+      "sidecar_port": 8888,
+      "require_service_route": false
+    },
+    "tests": {
+      "required": true,
+      "minimum_expectation": "at least one meaningful MCP test verifying tool response for listPetTypes or getPet, or explicit skip with documented reason"
+    }
+  },
+  "rules_files": [
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/.bob/rules-quarkus-developer/01-spring-swagger-rest-inspector.md",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/.bob/rules-quarkus-developer/02-quarkus-rest-client.md",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/.bob/rules-quarkus-developer/03-quarkus-mcp-server.md"
+  ],
+  "target_files": {
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicService.java": "MicroProfile REST Client interface declaring all 7 GET endpoints with @RegisterRestClient(configKey='petclinic') and @Produces(MediaType.APPLICATION_JSON)",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/PetType.java": "DTO for PetType schema: id (int), name (string maxLength 80)",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Visit.java": "DTO for Visit schema: id, date, description and related fields",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Pet.java": "DTO for Pet schema: id, name, birthDate, type (PetType), ownerId, visits (List<Visit>)",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Owner.java": "DTO for Owner schema: id, firstName, lastName, address, city, telephone, pets (List<Pet>)",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java": "Quarkus MCP server class with @Tool-annotated methods wrapping each REST client endpoint, returning ToolResponse with TextContent",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/resources/application.properties": "Set port 8888, CORS enabled, and rest-client.petclinic.url",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml": "Add sidecar container for petclinic-mcp image exposing port 8888 to the existing Deployment",
+    "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java": "Quarkus test for MCP server tools, at minimum verifying listPetTypes tool invocation"
+  },
+  "restClientEndpoints": [
+    {
+      "method": "GET",
+      "path": "/pettypes",
+      "operation": "listPetTypes",
+      "response_type": "List<PetType>",
+      "params": []
+    },
+    {
+      "method": "GET",
+      "path": "/pettypes/{petTypeId}",
+      "operation": "getPetType",
+      "response_type": "PetType",
+      "params": [{ "name": "petTypeId", "in": "path", "type": "int" }]
+    },
+    {
+      "method": "GET",
+      "path": "/pets",
+      "operation": "listPets",
+      "response_type": "List<Pet>",
+      "params": []
+    },
+    {
+      "method": "GET",
+      "path": "/pets/{petId}",
+      "operation": "getPet",
+      "response_type": "Pet",
+      "params": [{ "name": "petId", "in": "path", "type": "int" }]
+    },
+    {
+      "method": "GET",
+      "path": "/owners/{ownerId}/pets/{petId}",
+      "operation": "getOwnersPet",
+      "response_type": "Pet",
+      "params": [
+        { "name": "ownerId", "in": "path", "type": "int" },
+        { "name": "petId", "in": "path", "type": "int" }
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/owners",
+      "operation": "listOwners",
+      "response_type": "List<Owner>",
+      "params": [{ "name": "lastName", "in": "query", "type": "string", "required": false }]
+    },
+    {
+      "method": "GET",
+      "path": "/owners/{ownerId}",
+      "operation": "getOwner",
+      "response_type": "Owner",
+      "params": [{ "name": "ownerId", "in": "path", "type": "int" }]
+    }
+  ],
+  "mcpTools": [
+    {
+      "name": "listPetTypes",
+      "description": "Lists all pet types available in the petclinic system. Takes no parameters. Returns a JSON array of PetType objects each with id and name fields.",
+      "operation": "listPetTypes",
+      "args": []
+    },
+    {
+      "name": "getPetType",
+      "description": "Retrieves a single pet type by its numeric ID. Parameter: petTypeId (int) — the ID of the pet type to look up, e.g. 1. Returns a single PetType object with id and name.",
+      "operation": "getPetType",
+      "args": [
+        { "name": "petTypeId", "description": "The numeric ID of the pet type to retrieve. Example: 1" }
+      ]
+    },
+    {
+      "name": "listPets",
+      "description": "Lists all pets registered in the petclinic system. Takes no parameters. Returns a JSON array of Pet objects including id, name, birthDate, type, ownerId, and visits.",
+      "operation": "listPets",
+      "args": []
+    },
+    {
+      "name": "getPet",
+      "description": "Retrieves a single pet by its numeric ID. Parameter: petId (int) — the ID of the pet, e.g. 3. Returns a Pet object with id, name, birthDate, type, ownerId, and visits.",
+      "operation": "getPet",
+      "args": [
+        { "name": "petId", "description": "The numeric ID of the pet to retrieve. Example: 3" }
+      ]
+    },
+    {
+      "name": "getOwnersPet",
+      "description": "Retrieves a specific pet belonging to a specific owner. Parameters: ownerId (int) — the owner's ID, e.g. 1; petId (int) — the pet's ID, e.g. 2. Returns a Pet object.",
+      "operation": "getOwnersPet",
+      "args": [
+        { "name": "ownerId", "description": "The numeric ID of the owner who owns the pet. Example: 1" },
+        { "name": "petId", "description": "The numeric ID of the pet belonging to the given owner. Example: 2" }
+      ]
+    },
+    {
+      "name": "listOwners",
+      "description": "Lists owners in the petclinic system, optionally filtered by last name. Parameter: lastName (string, optional) — partial or full last name filter, e.g. 'Smith'. Returns a JSON array of Owner objects.",
+      "operation": "listOwners",
+      "args": [
+        { "name": "lastName", "description": "Optional last name to filter owners. Pass empty string to return all owners. Example: 'Smith'" }
+      ]
+    },
+    {
+      "name": "getOwner",
+      "description": "Retrieves a single owner by their numeric ID. Parameter: ownerId (int) — the ID of the owner, e.g. 1. Returns an Owner object with id, firstName, lastName, address, city, telephone, and pets.",
+      "operation": "getOwner",
+      "args": [
+        { "name": "ownerId", "description": "The numeric ID of the owner to retrieve. Example: 1" }
+      ]
+    }
+  ],
+  "kubernetesChanges": {
+    "file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml",
+    "description": "Add a sidecar container to the existing Deployment spec under spec.template.spec.containers",
+    "sidecar_spec": {
+      "name": "petclinic-mcp",
+      "image": "petclinic-mcp:latest",
+      "ports": [{ "containerPort": 8888, "name": "mcp-http" }],
+      "env": [
+        { "name": "QUARKUS_REST_CLIENT_PETCLINIC_URL", "value": "http://localhost:9966/petclinic/api" },
+        { "name": "QUARKUS_HTTP_PORT", "value": "8888" }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "order": 1,
+      "task": "Create PetType DTO",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/PetType.java"
+    },
+    {
+      "order": 2,
+      "task": "Create Visit DTO",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Visit.java"
+    },
+    {
+      "order": 3,
+      "task": "Create Pet DTO referencing PetType and Visit",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Pet.java"
+    },
+    {
+      "order": 4,
+      "task": "Create Owner DTO referencing Pet",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Owner.java"
+    },
+    {
+      "order": 5,
+      "task": "Create PetclinicService REST client interface with @RegisterRestClient(configKey='petclinic') and all 7 GET endpoints annotated with @Produces(MediaType.APPLICATION_JSON)",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicService.java"
+    },
+    {
+      "order": 6,
+      "task": "Create PetclinicMcpServer with @ApplicationScoped, inject PetclinicService with @Inject @RestClient, implement one @Tool method per endpoint with @ToolArg on each parameter, return ToolResponse containing TextContent with JSON-serialized result",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java"
+    },
+    {
+      "order": 7,
+      "task": "Write application.properties with port 8888, CORS enabled, and rest-client.petclinic.url",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/resources/application.properties"
+    },
+    {
+      "order": 8,
+      "task": "Update Kubernetes manifest to add sidecar container petclinic-mcp exposing port 8888",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml"
+    },
+    {
+      "order": 9,
+      "task": "Write Quarkus test for PetclinicMcpServer verifying at least one tool invocation",
+      "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java"
+    }
+  ],
+  "dependencies": {
+    "pom_changes_required": false,
+    "existing_dependencies": [
+      "io.quarkiverse.mcp:quarkus-mcp-server-http",
+      "io.quarkus:quarkus-arc",
+      "io.quarkus:quarkus-rest-client-jackson:3.32.1"
+    ],
+    "notes": "All required dependencies are already present in pom.xml. No changes needed."
+  },
+  "tech_debt": {
+    "configKey_vs_baseUri": "Rule 02 specifies baseUri attribute on @RegisterRestClient but the plan enforces configKey per global constraints; configKey is the correct modern approach and avoids hardcoding URLs in source",
+    "Visit_schema_incomplete": "Visit DTO fields beyond date and description were not fully specified in the prompt; Visit is defined with common fields but may need adjustment if the full OpenAPI schema differs",
+    "no_error_handling_in_tools": "@Tool methods must not declare throws; runtime exceptions from the REST client will propagate unchecked — consider wrapping in try/catch and returning error TextContent"
+  },
+  "modernization_steps": [
+    { "order": 1, "task": "Create PetType DTO", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/PetType.java" },
+    { "order": 2, "task": "Create Visit DTO", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Visit.java" },
+    { "order": 3, "task": "Create Pet DTO", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Pet.java" },
+    { "order": 4, "task": "Create Owner DTO", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/dto/Owner.java" },
+    { "order": 5, "task": "Create PetclinicService REST client interface", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/client/PetclinicService.java" },
+    { "order": 6, "task": "Create PetclinicMcpServer MCP tool class", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/java/org/acme/mcp/PetclinicMcpServer.java" },
+    { "order": 7, "task": "Update application.properties", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/resources/application.properties" },
+    { "order": 8, "task": "Update Kubernetes manifest with sidecar", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/main/kubernetes/petclinic-kubernetes.yaml" },
+    { "order": 9, "task": "Write MCP server test", "target_file": "legacy-to-mcp13/input-documents/petclinic-mcp-bob/src/test/java/org/acme/mcp/PetclinicMcpServerTest.java" }
+  ],
+  "evaluation_criteria": [
+    "@Inject and @RestClient both present on the PetclinicService field in PetclinicMcpServer",
+    "configKey 'petclinic' matches quarkus.rest-client.petclinic.url in application.properties",
+    "No throws declared on any @Tool method",
+    "No new ObjectMapper() instantiation — use injected ObjectMapper or Jakarta JSON-B",
+    "At least one meaningful MCP test or explicit skip reason documented in test file",
+    "Sidecar container in Kubernetes manifest exposes containerPort 8888",
+    "@Produces(MediaType.APPLICATION_JSON) present on PetclinicService interface",
+    "Each @Tool description mentions its parameters and return value",
+    "Every @Tool method parameter annotated with @ToolArg(description = '...')",
+    "All four DTOs (PetType, Visit, Pet, Owner) created in org.acme.dto package",
+    "PetclinicService interface name ends with 'Service' per Rule 02",
+    "REST client uses @RegisterRestClient(configKey = \"petclinic\") not baseUri"
+  ]
+}
